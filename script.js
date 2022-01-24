@@ -1,127 +1,166 @@
-// Tableau de données obtenu sur les données temperature
-donnees = [
-  { type: "1", temp: 10 },
-  { type: "2", temp: 11 },
-  { type: "3", temp: 12 },
-  { type: "4", temp: 13 },
-  { type: "5", temp: 13 },
-  { type: "6", temp: 14 },
-  { type: "7", temp: 15 },
-  { type: "8", temp: 15 },
-  { type: "9", temp: 16 },
-  { type: "10", temp: 17 },
-  { type: "11", temp: 17 },
-  { type: "12", temp: 17 },
-  { type: "13", temp: 18 },
-  { type: "14", temp: 19 },
-  { type: "15", temp: 18 },
-  { type: "16", temp: 18 },
-  { type: "17", temp: 18 },
-  { type: "18", temp: 28 },
-  { type: "19", temp: 16 },
-  { type: "20", temp: 15 },
-  { type: "21", temp: 15 },
-  { type: "22", temp: 14 },
-  { type: "23", temp: 13 },
-  { type: "eaeae", temp: 13 },
-  { type: "25", temp: 13 },
-  { type: "26", temp: 13 },
-  { type: "27", temp: 13 },
-  { type: "28", temp: 13 },
-  { type: "29", temp: 13 },
-  { type: "30", temp: 13 },
-];
+listeTypeComposants = []
+listeTypeAlerte = []
+alerte = []
+bac = []
+listeBacPosition = []
+composant = []
+alerteRecu = []
+relevesCapteurs = []
 
-// Liste des modalités de la variable type
-var type_modalites = donnees.map(function(d) { return d.type; });
-// temp (moyen) maximum
-var temp_max = d3.max(donnees, function(d) { return d.temp; });
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-// Définition des marges et de la taille du graphique
-var marges = {haut: 50, droit: 50, bas: 50, gauche: 50},
-    largeurTotale = 800,
-    hauteurTotale = 500,
-    largeurInterne = largeurTotale - marges.gauche - marges.droit,
-    hauteurInterne = hauteurTotale - marges.haut - marges.bas;
+async function fetchMovies() {
+    let response = await fetch('http://192.20.55.3:5000/api/capteur', {
+        method: 'GET',
+    });
+    return await response.json();
+}
 
-// Echelle pour les temp sur l'axe Y
-var echelleY = d3.scaleLinear()
-    .domain([0, temp_max])
-    .range([hauteurInterne, 0]);
+i = 0
+here = fetchMovies()
 
-// Echelle pour le type sur l'axe X
-var echelleX = d3.scaleBand()
-    .domain(type_modalites)
-    .range([0, largeurInterne])
-    .padding(0.1);
+const chargeData = () => {
+    here.then((a) => {
+        a.data[0].ListeTypeComposants.forEach(element => listeTypeComposants.push(element));
+        a.data[1].ListeTypeAlerte.forEach(element => listeTypeAlerte.push(element));
+        a.data[2].Alerte.forEach(element => alerte.push(element));
+        a.data[3].Bac.forEach(element => bac.push(element));
+        a.data[4].ListeBacPosition.forEach(element => listeBacPosition.push(element));
+        a.data[5].Composant.forEach(element => composant.push(element));
+        a.data[6].AlerteRecu.forEach(element => alerteRecu.push(element));
+        a.data[7].RelevesCapteurs.forEach(element => relevesCapteurs.push(element));
+        i++;
+        AfficherVal();
+    });
+};
 
-// Création de l'axe X
-var axeX = d3.axisBottom()
-    .scale(echelleX);
+chargeData();
 
-// Création de l'axe Y
-var axeY = d3.axisLeft()
-    .scale(echelleY);
+function AfficherVal() {
+    console.log("here");
+    console.log(listeTypeComposants.forEach(function(current) {
+        console.log("NomComposant =" + current.NomComposant + " typeComposant =" + current.typeComposant);
+    }));
+    console.log(listeTypeAlerte.forEach(function(current) {
+        console.log("Criticite =" + current.Criticite + " MethodeNotification =" + current.MethodeNotification + " TypeAlerte =" + current.TypeAlerte);
+    }));
+    console.log(alerte.forEach(function(current) {
+        console.log("ComposantCible =" + current.ComposantCible + " TypeAlerte =" + current.TypeAlerte + " id =" + current.id + " seuil =" + current.seuil);
+    }));
+    console.log(bac.forEach(function(current) {
+        console.log("NomBac =" + current.NomBac + " etage =" + current.etage + " id =" + current.id + " x =" + current.x + " y =" + current.y);
+    }));
+    console.log(listeBacPosition.forEach(function(current) {
+        console.log("Bac =" + current.Bac + " Capteur =" + current.Capteur + " id =" + current.id);
+    }));
+    console.log(composant.forEach(function(current) {
+        console.log("DateAjout =" + current.DateAjout + " Position =" + current.Position + " id =" + current.id + " type =" + current.type);
+    }));
+    console.log(alerteRecu.forEach(function(current) {
+        console.log("DateAjout =" + current.DateAjout + " NumeroDalerte =" + current.Position + " id =" + current.id);
+    }));
+    console.log(relevesCapteurs.forEach(function(current) {
+        console.log("DateAjout =" + current.DateAjout + " IdCapteur =" + current.IdCapteur + " Valeur =" + current.Valeur + " id =" + current.id);
+    }));
+}
 
-// Création du graphique
-var graphique = d3.select("#graph").append("svg")
-    .attr("width", largeurTotale)
-    .attr("height", hauteurTotale)
-  .append("g")
-    .attr("transform", "translate(" + marges.gauche + "," + marges.haut + ")");
+setTimeout(() => {
+    // Liste des modalités de la variable type
+    var type_modalites = relevesCapteurs.map(function(d) { return d.id; });
+    // temp (moyen) maximum
+    var temp_max = d3.max(relevesCapteurs, function(d) { return d.Valeur; });
+    AfficherVal();
+    // Définition des marges et de la taille du graphique
+    var marges = { haut: 50, droit: 50, bas: 50, gauche: 50 },
+        largeurTotale = 1000,
+        hauteurTotale = 500,
+        largeurInterne = largeurTotale - marges.gauche - marges.droit,
+        hauteurInterne = hauteurTotale - marges.haut - marges.bas;
 
-// Ajout de l'axe X au graphique
-graphique.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + hauteurInterne + ")")
-  .call(axeX);
+    // Echelle pour les temp sur l'axe Y
+    var echelleY = d3.scaleLinear()
+        .domain([0, temp_max])
+        .range([hauteurInterne, 0]);
 
-// Ajout de l'axe Y au graphique
-graphique.append("g")
-    .attr("class", "y axis")
-  .call(axeY);
+    // Echelle pour le type sur l'axe X
+    var echelleX = d3.scaleBand()
+        .domain(type_modalites)
+        .range([0, largeurInterne])
 
-/* Fichier du début (sans modif)
-graphique.append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 6)
-    .attr("dy", ".71em")
-    .style("text-anchor", "end")
-    .text("temperature")
-*/
+    console.log(echelleX)
+        // Création de l'axe X
+    var axeX = d3.axisBottom()
+        .scale(echelleX);
 
-graphique.append("text")
-    //.attr("transform", "rotate(-90)")
-    .attr("y", -25)
-    .attr("x", 60)
-    .attr("dy", ".71em")
-    .style("text-anchor", "end")
-    .text("Temperature")
+    // Création de l'axe Y
+    var axeY = d3.axisLeft()
+        .scale(echelleY);
 
-graphique.append("text")
-    //.attr("transform", "rotate(-90)")
-    .attr("y", 440)
-    .attr("x", 685)
-    .attr("dx", ".71em")
-    .style("text-anchor", "end")
-    .text("Temps en h")
+    // Création du graphique
+    var graphique = d3.select("#graph").append("svg")
+        .attr("width", largeurTotale)
+        .attr("height", hauteurTotale)
+        .append("g")
+        .attr("transform", "translate(" + marges.gauche + "," + marges.haut + ")");
 
-    
-// Ajout d'une barre pour chaque type de logement, avec une taille fonction du temp moyen
-graphique.selectAll(".bar")
-  .data(donnees)
-  .enter()
-  .append("rect")
-  .attr("class", "bar")
-  .attr("x", function(d) { return echelleX(d.type); })
-  .attr("width", echelleX.bandwidth())
-  .attr("y", function(d) { return echelleY(d.temp); })
-  .attr("height", function(d) { return hauteurInterne - echelleY(d.temp); })
-  .attr("fill", function(d) 
-        {   if (d.temp <= 14)
+    // Ajout de l'axe X au graphique
+    graphique.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + hauteurInterne + ")")
+        .call(axeX)
+        .selectAll("text")
+        .attr("transform", function(d) {
+            return "rotate(-65)"
+        });
+
+    // Ajout de l'axe Y au graphique
+    graphique.append("g")
+        .attr("class", "y axis")
+        .call(axeY)
+        .selectAll("text")
+        .attr("transform", function(d) {
+            return "rotate(-65)"
+        });
+
+
+    graphique.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -25)
+        .attr("x", 60)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Temperature")
+
+    graphique.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 440)
+        .attr("x", 685)
+        .attr("dx", ".71em")
+        .style("text-anchor", "end")
+        .text("Temps en h")
+        .attr("transform", function(d) {
+            return "rotate(-65)"
+        })
+
+    graphique.selectAll(".bar")
+        .data(relevesCapteurs)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d) { return echelleX(d.id); })
+        .attr("width", echelleX.bandwidth())
+        .attr("y", function(d) { return echelleY(d.Valeur); })
+        .attr("height", function(d) { return hauteurInterne - echelleY(d.Valeur); })
+        .attr("fill", function(d) {
+            if (d.Valeur <= 14)
                 return "#318CE7";
-            else if(d.temp > 14 && d.temp < 25)
+            else if (d.Valeur > 14 && d.Valeur < 25)
                 return "#FF7F00";
             else
                 return "#FF0033";
-    });
+        });
+}, 250)
+
+// Ajout d'une barre pour chaque type de logement, avec une taille fonction du temp moyen
