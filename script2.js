@@ -6,15 +6,23 @@ listeBacPosition = []
 composant = []
 alerteRecu = []
 relevesCapteurs = []
-let ip
-function loadIP(){
-	 ip = prompt("Veuillez renseignez l'ip du serveur de données", "192...");
+ip="192..."
+allVar=[]
+function loadIP(){	
+	ip = prompt("Veuillez renseignez l'ip du serveur de données", window.name);
+	window.name = ip
+	
+	chargeData();
 }
-loadIP();
+
+if (window.name == null){
+	loadIP();
+}
 var ctx = document.getElementById("myChart");
 var IdCapteur=1
 var btn1 = document.getElementById("clear"); 
 var btn = document.getElementById("toutajouter"); 
+var changeIP = document.getElementById("changeIP"); 
 //var element = document.getElementById("mybutton");
 let width, height, gradient;
 function getGradient(ctx, chartArea) {
@@ -84,19 +92,130 @@ document.getElementById('exporter').addEventListener('click', function() {
 	});
 }, false);
 
+btn1.onclick = function(){
+	lineChart.data.datasets=[]
+	lineChart.update();
+}
+		
+
+btn.onclick = function(){
+	var listUsed=[]
+	uniqueIdCapteur.forEach(function(m){
+					if(document.getElementById(''+m).checked) {
+						listUsed.push(m);
+					} 
+	})
+	console.log(listUsed);
+	listUsed.forEach(function(here){
+		console.log(here)
+		var Val=relevesCapteurs.reduce((ids, current) => {
+									  if (current.IdCapteur==here) {
+										ids.push(current.Valeur);
+									  }
+									  return ids;
+									}, [])
+		lineChart.data.datasets.push({
+				label: "Liste total capteurs",
+				data: Val,
+				borderColor:'#00BFFF',
+			  })
+			lineChart.data.labels=relevesCapteurs.reduce((ids, current) => {
+										  if (current.IdCapteur==here) {
+											ids.push(current.DateAjout);
+										  }
+										  return ids;
+										}, [])
+			
+			lineChart.options.scales.yAxes[0].ticks.max=Math.max.apply(Math, allVar)+5-Math.max.apply(Val, allVar)%5,
+			lineChart.options.scales.yAxes[0].ticks.min=Math.min.apply(Math, allVar)-3
+			lineChart.data.datasets[0].label = "Graphe pour le capteur num "+here
+			
+			lineChart.update();
+	})
+};
+
 const unique = (value, index, self) => {
   return self.indexOf(value) === index
 }
 
-async function fetchMovies(i) {
+async function fetchMovies(i,numCapteur,amount) {
 	var data = { "numTable" : i };
-	var url = new URL("http://"+ip+":5000/api/capteur");
+	var url = new URL("http://"+window.name+":5000/api/capteur");
 	for (let k in data) { url.searchParams.append(k, data[k]); }
+	if(i==7){
+		url.searchParams.append("sensorid",numCapteur)
+		url.searchParams.append("amount",amount)
+	}
     let response = await fetch(url);
 	return await response.json();
 }
 
+function setButton(){
+	var IdUse=[]
+	relevesCapteurs.forEach(function(m){ 
+		if(!IdUse.includes(m.IdCapteur)){
+			IdUse.push(m.IdCapteur);
+			var checkbox = document.createElement('input');
+			var label = document.createElement('label')
+			var br = document.createElement('br');
+			var container = document.getElementById('container');
+			checkbox.type = 'checkbox';
+			checkbox.id = ''+m.IdCapteur;
+			checkbox.name = 'interest';
+			checkbox.value = ''+m.IdCapteur;
+		 
+			label.htmlFor = ''+m.IdCapteur;
+			label.appendChild(document.createTextNode(''+m.IdCapteur));
+		 
+			container.appendChild(checkbox);
+			container.appendChild(label);
+			container.appendChild(br);
+			container.appendChild(br);
+			checker.push(document.getElementById(''+m.IdCapteur))
+			document.getElementById(''+m.IdCapteur).addEventListener('click', function() {
+				
+				if (checker[m.IdCapteur-1].checked == true){
+					var Val=relevesCapteurs.reduce((ids, current) => {
+							if (current.IdCapteur==m.IdCapteur) {ids.push(current.Valeur);}
+							return ids;
+							}, [])
+					console.log(Val);
+					allVar=allVar.concat(Val)
+					lineChart.data.datasets.push({
+						label: "Graphe pour le capteur num "+m.IdCapteur,
+						data: Val,
+						borderColor:'#00BFFF',
+					  })
+					lineChart.data.labels=relevesCapteurs.reduce((ids, current) => {
+												  if (current.IdCapteur==m.IdCapteur) {ids.push(current.DateAjout);}
+												  return ids;
+												}, [])
+					
+					lineChart.options.scales.yAxes[0].ticks.max=Math.max.apply(Math, allVar)+5-Math.max.apply(Val, allVar)%5,
+					lineChart.options.scales.yAxes[0].ticks.min=Math.min.apply(Math, allVar)-3
+					lineChart.data.datasets[0].label = "Graphe pour le capteur num "+m.IdCapteur
+					
+					lineChart.update();
+				} else {
+					for(var i=0;i<lineChart.data.datasets.length;i++){
+						if(lineChart.data.datasets[i].label =="Graphe pour le capteur num "+m.IdCapteur)
+							lineChart.data.datasets.splice(i,1)
+						
+						lineChart.update();
+					}
+				}
+			})	
+		}})
+}
 const chargeData = () => {
+	listeTypeComposants = []
+	listeTypeAlerte = []
+	alerte = []
+	bac = []
+	listeBacPosition = []
+	composant = []
+	alerteRecu = []
+	relevesCapteurs = []
 	lu=fetchMovies(0)
     lu.then((a) => {
 		a['data'][0].ListeTypeComposants.forEach(element => listeTypeComposants.push(element));
@@ -125,15 +244,30 @@ const chargeData = () => {
     lu.then((a) => {
         a['data'][0].AlerteRecu.forEach(element => alerteRecu.push(element));
 	})
-	lu=fetchMovies(7)
+	lu=fetchMovies(7,1,10)
     lu.then((a) => {
+		console.log(a['data'][0].RelevesCapteurs.map(a=> "{"+a.IdCapteur+" "+a.Valeur+"}"))
+        a['data'][0].RelevesCapteurs.forEach(element => relevesCapteurs.push(element));
+	})
+	lu=fetchMovies(7,2,10)
+    lu.then((a) => {
+		console.log(a['data'][0].RelevesCapteurs.map(a=> "{"+a.IdCapteur+" "+a.Valeur+"}"))
+        a['data'][0].RelevesCapteurs.forEach(element => relevesCapteurs.push(element));
+	})
+	lu=fetchMovies(7,3,10)
+    lu.then((a) => {
+		console.log(a['data'][0].RelevesCapteurs.map(a=> "{"+a.IdCapteur+" "+a.Valeur+"}"))
         a['data'][0].RelevesCapteurs.forEach(element => relevesCapteurs.push(element));
 	})
 	i++;
 	uniqueIdCapteur=[...new Set(relevesCapteurs.map(m=>m.IdCapteur))]
+	window.setTimeout(function() {
+		setButton();
+	}, 500);
 };
 
 chargeData();
+
 
 function AfficherVal() {
     console.log("here");
@@ -163,176 +297,18 @@ function AfficherVal() {
     }));
 }
 
+changeIP.addEventListener('click', function() {
+	loadIP();
+}, false);
+
+
 window.onload = function() {
 
 	
 	setTimeout(() => {
-	/*	
-		var date=relevesCapteurs.reduce((ids, current) => {
-				  if (current.IdCapteur==IdCapteur) {
-					ids.push(current.DateAjout);
-				  }
-				  return ids;
-				}, [])
-				
-		var Value=relevesCapteurs.reduce((ids, current) => {
-				  if (current.IdCapteur==IdCapteur) {
-					ids.push(current.Valeur);
-				  }
-				  return ids;
-				}, [])	
-			
-	*/
-	  
-	  btn1.onclick = function(){
-		lineChart.data.datasets=[]
-		lineChart.update();
-	  }
-/*	  
-		var para1=IdCapteur
-		var min = Math.min.apply(Math,relevesCapteurs.map(x => x['IdCapteur'])),
-			max = Math.max.apply(Math,relevesCapteurs.map(x => x['IdCapteur'])),
-			select = document.getElementById('selectNumber');
-		for (var i = min; i<=max; i++){
-			var opt = document.createElement('option');
-			opt.value = i;
-			opt.innerHTML = i;
-			select.appendChild(opt);
-		}
-*/		
-		var IdUse=[]
-		relevesCapteurs.forEach(function(m){ 
-			if(!IdUse.includes(m.IdCapteur)){
-				IdUse.push(m.IdCapteur);
-				var checkbox = document.createElement('input');
-				var label = document.createElement('label')
-				var br = document.createElement('br');
-				var container = document.getElementById('container');
-				checkbox.type = 'checkbox';
-				checkbox.id = ''+m.IdCapteur;
-				checkbox.name = 'interest';
-				checkbox.value = ''+m.IdCapteur;
-			 
-				label.htmlFor = ''+m.IdCapteur;
-				label.appendChild(document.createTextNode(''+m.IdCapteur));
-			 
-				container.appendChild(checkbox);
-				container.appendChild(label);
-				container.appendChild(br);
-				container.appendChild(br);
-				checker.push(document.getElementById(''+m.IdCapteur))
-				document.getElementById(''+m.IdCapteur).addEventListener('click', function() {
-					if (checker[m.IdCapteur-1].checked == true){
-						var Val=relevesCapteurs.reduce((ids, current) => {
-													  if (current.IdCapteur==m.IdCapteur) {
-														ids.push(current.Valeur);
-													  }
-													  return ids;
-													}, [])
-						allVar=allVar.concat(Val)
-						lineChart.data.datasets.push({
-							label: "Graphe pour le capteur num "+m.IdCapteur,
-							data: Val,
-							borderColor:'#00BFFF',
-						  })
-						lineChart.data.labels=relevesCapteurs.reduce((ids, current) => {
-													  if (current.IdCapteur==m.IdCapteur) {
-														ids.push(current.DateAjout);
-													  }
-													  return ids;
-													}, [])
-						
-						lineChart.options.scales.yAxes[0].ticks.max=Math.max.apply(Math, allVar)+5-Math.max.apply(Val, allVar)%5,
-						lineChart.options.scales.yAxes[0].ticks.min=Math.min.apply(Math, allVar)-3
-						lineChart.data.datasets[0].label = "Graphe pour le capteur num "+m.IdCapteur
-						
-						lineChart.update();
-					} else {
-						for(var i=0;i<lineChart.data.datasets.length;i++){
-							if(lineChart.data.datasets[i].label =="Graphe pour le capteur num "+m.IdCapteur)
-								lineChart.data.datasets.splice(i,1)
-							
-							lineChart.update();
-						}
-					}
-				})	
-			}})
 
-		btn.onclick = function(){
-			var listUsed=[]
-			uniqueIdCapteur.forEach(function(m){
-							if(document.getElementById(''+m).checked) {
-								listUsed.push(m);
-							} 
-			})
-			console.log(listUsed);
-			listUsed.forEach(function(here){
-				console.log(here)
-				var Val=relevesCapteurs.reduce((ids, current) => {
-											  if (current.IdCapteur==here) {
-												ids.push(current.Valeur);
-											  }
-											  return ids;
-											}, [])
-				lineChart.data.datasets.push({
-						label: "Liste total capteurs",
-						data: Val,
-						borderColor:'#00BFFF',
-					  })
-					lineChart.data.labels=relevesCapteurs.reduce((ids, current) => {
-												  if (current.IdCapteur==here) {
-													ids.push(current.DateAjout);
-												  }
-												  return ids;
-												}, [])
-					
-					lineChart.options.scales.yAxes[0].ticks.max=Math.max.apply(Math, allVar)+5-Math.max.apply(Val, allVar)%5,
-					lineChart.options.scales.yAxes[0].ticks.min=Math.min.apply(Math, allVar)-3
-					lineChart.data.datasets[0].label = "Graphe pour le capteur num "+here
-					
-					lineChart.update();
-			})
-		}; 
-		
-		var allVar=relevesCapteurs.reduce((ids, current) => {
-											  if (current.IdCapteur==1) {
-												ids.push(current.Valeur);
-											  }
-											  return ids;
-											}, [])
-	/*	element.onclick = function(event) {
-			console.log(lineChart.data.datasets)
-			var select = document.getElementById('selectNumber');
-			var IdCapteur=parseInt(select.options[select.selectedIndex].text)
-			if(!dejaSurLeGraphe.includes(IdCapteur)){
-				dejaSurLeGraphe.push(IdCapteur)
-				var Val=relevesCapteurs.reduce((ids, current) => {
-											  if (current.IdCapteur==IdCapteur) {
-												ids.push(current.Valeur);
-											  }
-											  return ids;
-											}, [])
-				allVar=allVar.concat(Val)
-				lineChart.data.datasets.push({
-					label: "Liste total capteurs",
-					data: Val,
-					borderColor:'#00BFFF',
-				  })
-				lineChart.data.labels=relevesCapteurs.reduce((ids, current) => {
-											  if (current.IdCapteur==IdCapteur) {
-												ids.push(current.DateAjout);
-											  }
-											  return ids;
-											}, [])
-				
-				lineChart.options.scales.yAxes[0].ticks.max=Math.max.apply(Math, allVar)+5-Math.max.apply(Val, allVar)%5,
-				lineChart.options.scales.yAxes[0].ticks.min=Math.min.apply(Math, allVar)-3
-				lineChart.data.datasets[0].label = "Graphe pour le capteur num "+IdCapteur
-				
-				lineChart.update();
-			}
-		}
-		*/
+	   
+	
 	
 	}, 250)
 	
