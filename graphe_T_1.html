@@ -72,7 +72,7 @@
               </ul>
           </nav>
       </div>
-  </header>
+	</header>
     <body>
       <br>
         <!-- Corps de la page -->
@@ -80,20 +80,39 @@
       
          <center><h2> <U> Capteur n°1 température</h2></center>
         <br><br>
-          <div id="graph">   
-            <div id="scatter_area"></div>
-            <div class="chart-container">
-				<canvas id="myChart"></canvas>
-				<button style="display: none;" id="clear">clear</button>
-				<button id="toutajouter" style="display: none;">tout ajouter</button>
-
-				<div id="container"></div>
-				<div>
-				<button id="nouvelonglet">ouvrir dans un nouvel onglet</button>
-				<button id="exporter">sauvegarder comme png</button>
-				<button id="changeIP">changer l'ip de connections</button>
-			</div>
-          </div>
+			
+	  
+		<table>
+		  <colgroup>
+			<col class="ten" />
+			<col class="twenty" />
+		  </colgroup>
+		  <tr>
+			<th>
+				<p id="graphique">
+					<div id="graph">   
+						<div id="scatter_area">
+						</div>
+						<div class="chart-container">
+							<canvas id="myChart"></canvas>
+							<button style="display: none;" id="clear">clear</button>
+							<button id="toutajouter" style="display: none;">tout ajouter</button>
+					  </div>
+					</div>
+				 </p>
+			</th>
+			<th> 
+				<p id="setup">
+					<div id="container"></div>
+					<button id="nouvelonglet">ouvrir dans un nouvel onglet</button>
+					<button id="exporter">sauvegarder comme png</button>
+					<button id="changeIP">changer l'ip de connections</button>
+				</p>
+			 </th>
+		  </tr>
+			  
+			 
+		</div>
 
     </body>
 

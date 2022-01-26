@@ -1,4 +1,10 @@
-.chart-container {
-    width: 1000px;
-    height:600px
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+.ten {
+  width: 80%;
+}
+.twenty {
+  width: 20%;
 }

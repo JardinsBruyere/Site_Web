@@ -135,56 +135,58 @@ function setButton(){
 	console.log(uniqueIdCapteur)
 	uniqueIdCapteur.forEach(function(m){ 
 		if(!IdUse.includes(m)){
-			IdUse.push(m);
-			var checkbox = document.createElement('input');
-			var label = document.createElement('label')
-			var br = document.createElement('br');
-			var container = document.getElementById('container');
-			checkbox.type = 'checkbox';
-			checkbox.id = ''+m;
-			checkbox.name = 'interest';
-			checkbox.value = ''+checkbox.id;
-		 
-			label.htmlFor = ''+checkbox.id;
-			label.appendChild(document.createTextNode(''+checkbox.id));
-		 
-			container.appendChild(checkbox);
-			container.appendChild(label);
-			container.appendChild(br);
-			container.appendChild(br);
-			checker.push(document.getElementById(''+checkbox.id))
-			document.getElementById(''+checkbox.id).addEventListener('click', function() {
-				
-				console.log(this.id)
-				if (checker[this.id-1].checked == true){
-					var Val=relevesCapteurs.reduce((ids, current) => {
-							if (current.IdCapteur==this.id) {ids.push(current.Valeur);}
-							return ids;
-							}, [])
-					console.log(Val);
-					allVar=allVar.concat(Val)
-					lineChart.data.datasets.push({
-						label: ""+this.id,
-						data: Val,
-						borderColor:getRandomColor(),
-					  })
-					lineChart.data.labels=relevesCapteurs.reduce((ids, current) => {
-												  if (current.IdCapteur==this.id) {ids.push(current.DateAjout);}
-												  return ids;
-												}, [])
+			window.setTimeout(function() {
+				IdUse.push(m);
+				var checkbox = document.createElement('input');
+				var label = document.createElement('label')
+				var br = document.createElement('br');
+				var container = document.getElementById('container');
+				checkbox.type = 'checkbox';
+				checkbox.id = ''+m;
+				checkbox.name = 'interest';
+				checkbox.value = ''+checkbox.id;
+			 
+				label.htmlFor = ''+checkbox.id;
+				label.appendChild(document.createTextNode(''+checkbox.id));
+			 
+				container.appendChild(checkbox);
+				container.appendChild(label);
+				container.appendChild(br);
+				container.appendChild(br);
+				checker.push(document.getElementById(''+checkbox.id))
+				document.getElementById(''+checkbox.id).addEventListener('click', function() {
 					
-					lineChart.options.scales.yAxes[0].ticks.max=Math.max.apply(Math, allVar)+5-Math.max.apply(Val, allVar)%5,
-					lineChart.options.scales.yAxes[0].ticks.min=Math.min.apply(Math, allVar)-3
-					lineChart.update();
-				} else {
-					for(var i=0;i<=lineChart.data.datasets.length;i++){
-						if(lineChart.data.datasets[i].label ==this.id)
-							lineChart.data.datasets.splice(i,1)
+					console.log(this.id)
+					if (checker[this.id-1].checked == true){
+						var Val=relevesCapteurs.reduce((ids, current) => {
+								if (current.IdCapteur==this.id) {ids.push(current.Valeur);}
+								return ids;
+								}, [])
+						console.log(Val);
+						allVar=allVar.concat(Val)
+						lineChart.data.datasets.push({
+							label: ""+this.id,
+							data: Val,
+							borderColor:getRandomColor(),
+						  })
+						lineChart.data.labels=relevesCapteurs.reduce((ids, current) => {
+													  if (current.IdCapteur==this.id) {ids.push(current.DateAjout);}
+													  return ids;
+													}, [])
 						
+						lineChart.options.scales.yAxes[0].ticks.max=Math.max.apply(Math, allVar)+5-Math.max.apply(Val, allVar)%5,
+						lineChart.options.scales.yAxes[0].ticks.min=Math.min.apply(Math, allVar)-3
 						lineChart.update();
+					} else {
+						for(var i=0;i<=lineChart.data.datasets.length;i++){
+							if(lineChart.data.datasets[i].label ==this.id)
+								lineChart.data.datasets.splice(i,1)
+							
+							lineChart.update();
+						}
 					}
-				}
-			})	
+				})	
+			}, 500);
 		}})
 }
 const chargeData = () => {
