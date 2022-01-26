@@ -131,7 +131,7 @@ async function fetchMovies(i,numCapteur,amount) {
 
 function setButton(){
 	var IdUse=[]
-	uniqueIdCapteur=[...new Set(relevesCapteurs.map(m=>m.IdCapteur))]
+	uniqueIdCapteur=[...new Set(relevesCapteurs.map(m=>m.IdCapteur))].sort()
 	console.log(uniqueIdCapteur)
 	uniqueIdCapteur.forEach(function(m){ 
 		if(!IdUse.includes(m)){
