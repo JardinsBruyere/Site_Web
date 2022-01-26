@@ -7,6 +7,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="try.css">
         <title>Données climatiques</title>
+		  <script src="chart.js"></script>
+		  <script src="script2.js" defer></script>
+		  <link href="file.css" rel="stylesheet">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
       
     </head>
 
@@ -19,7 +23,7 @@
           <nav class="navbar">
               <ul class="menu">
                   <li class="menu-item">
-                      <a href="test.html">Accueil</a>
+                      <a href="index.html">Accueil</a>
                   </li>
                   <li class="menu-item has-anotherone">
                       <a href="">Sensor</a>
@@ -78,8 +82,16 @@
         <br><br>
           <div id="graph">   
             <div id="scatter_area"></div>
-            <script src="https://d3js.org/d3.v4.min.js"></script>
-            <script src="script.js"></script>
+            <div class="chart-container">
+				<canvas id="myChart"></canvas>
+				<button id="clear">clear</button>
+				<button id="toutajouter" style="display: none;">tout ajouter</button>
+
+				<div id="container"></div>
+				<div>
+				<button id="nouvelonglet">ouvrir dans un nouvel onglet</button>
+				<button id="exporter">sauvegarder comme png</button>
+			</div>
           </div>
 
     </body>
