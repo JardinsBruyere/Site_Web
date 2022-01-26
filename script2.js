@@ -6,7 +6,11 @@ listeBacPosition = []
 composant = []
 alerteRecu = []
 relevesCapteurs = []
-
+let ip
+function loadIP(){
+	 ip = prompt("Veuillez renseignez l'ip du serveur de données", "192...");
+}
+loadIP();
 var ctx = document.getElementById("myChart");
 var IdCapteur=1
 var btn1 = document.getElementById("clear"); 
@@ -85,9 +89,8 @@ const unique = (value, index, self) => {
 }
 
 async function fetchMovies(i) {
-
 	var data = { "numTable" : i };
-	var url = new URL("http://192.20.55.3:5000/api/capteur");
+	var url = new URL("http://"+ip+":5000/api/capteur");
 	for (let k in data) { url.searchParams.append(k, data[k]); }
     let response = await fetch(url);
 	return await response.json();
