@@ -24,8 +24,10 @@ var IdCapteur=1
 var btn1 = document.getElementById("clear"); 
 var btn = document.getElementById("toutajouter"); 
 var changeIP = document.getElementById("changeIP"); 
+var toCsv = document.getElementById("toCsv"); 
 //var element = document.getElementById("mybutton");
 let width, height, gradient;
+let csvContent = "data:text/csv;charset=utf-8,";
 function getGradient(ctx, chartArea) {
   const chartWidth = chartArea.right - chartArea.left;
   const chartHeight = chartArea.bottom - chartArea.top;
@@ -76,12 +78,31 @@ var lineChart = new Chart(ctx, {
 		},
 	  })
 
+toCsv.addEventListener('click', function() {
+	var today = new Date();
+	var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate()+'_'+today.getHours() + "h" + today.getMinutes() + "m" + today.getSeconds()+'s';
+	console.log(date)
+	const array = [Object.keys(relevesCapteurs[0])].concat(relevesCapteurs)
+	const value= array.map(it => {
+		return Object.values(it).toString()
+	}).join('\n')
+	console.log(value)
+	let csvContent = "data:text/csv;charset=utf-8,"+value
+	var downloadLink = document.createElement("a");
+	downloadLink.href = csvContent;
+	downloadLink.download = "Serre_data_["+date+"].csv";
+	document.body.appendChild(downloadLink);
+	downloadLink.click();
+	document.body.removeChild(downloadLink);
+})
+
 document.getElementById('nouvelonglet').addEventListener('click', function() {
 	var canvas = document.getElementById("myChart");
 	var dataURL = canvas.toDataURL("image/png");
 	var newTab = window.open('about:blank','image from canvas');
 	newTab.document.write("<img src='" + dataURL + "' alt='from canvas'/>");
 }, false);
+
 document.getElementById('exporter').addEventListener('click', function() {
 	let downloadLink = document.createElement('a');
 	downloadLink.setAttribute('download', 'GraphiqueDe'+lineChart.data.datasets.map(a=>a.label).join('+')+'.png');
@@ -115,7 +136,6 @@ function getRandomColor() {
   }
   return color;
 }
-
 
 async function fetchMovies(i,numCapteur,amount) {
 	var data = { "numTable" : i };
@@ -246,7 +266,6 @@ const chargeData = () => {
 };
 
 chargeData();
-
 
 function AfficherVal() {
     console.log("here");

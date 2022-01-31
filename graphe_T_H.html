@@ -7,7 +7,22 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="try.css">
         <title>Données climatiques</title>
-	<link rel="icon" href="favicon.ico" type="image/x-icon">
+		<link rel="icon" href="favicon.ico" type="image/x-icon">
+		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+
+		<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+		<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+		<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+		<script src="https://cdn.amcharts.com/lib/4/plugins/rangeSelector.js"></script>
+		<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+		<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+		<script src="https://cdn.amcharts.com/lib/4/plugins/timeline.js"></script> 
+		<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+		<script src="sandbox.js" defer></script>
+		<link href="sandbox.css" rel="stylesheet">
+		  <link href="file.css" rel="stylesheet">
 
     </head>
     <header>
@@ -71,17 +86,38 @@
       </div>
   </header>
     <body>
-      <br>
-        <!-- Corps de la page -->
-        
-        <br><br>
-         <center><h2><U> Données sur la dernière semaine:</h2></center>
 
-          <div id="graphe_G">   
-            <div id="scatter_area"></div>
-            <script src="https://d3js.org/d3.v4.min.js"></script>
-            <script src="fichier3.js"></script>
-          </div>
+          <table>
+		  <colgroup>
+			<col class="ten" />
+			<col class="tentwenty" />
+		  </colgroup>
+		  <tr>
+			<th>
+				<div id="boite">
+					<div id="chartdiv"></div>
+				</div>
+			</th>
+			<th> 
+		
+		
+				<p id="setup">
+					<div id="container"></div>
+					
+					Début : <input type="datetime-local" id="StartTime"
+					   name="meeting-time" value="2020-01-20T00:00"
+					   min="2020-01-20T00:00" max="2022-01-22T00:00">
+					<br>
+					Fin : <input type="datetime-local" id="EndTime"
+					   name="meeting-time" value="2050-01-28T00:00"
+					   min="2023-01-20T00:00" max="2060-01-28T00:00">
+					<br>
+					<button id="update">update</button>
+					<br>
+					<select name="precision" id="precision" onchange="updatePrecision(this)">
+				</p>
+			 </th>
+		  </tr>
 
     </body>
 
@@ -117,6 +153,5 @@
           </tr>
         </table>
         
-  </div>
 </footer>
 </html>
