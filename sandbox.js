@@ -67,14 +67,14 @@ var FinValeur
 
 
 var chart = am4core.create("chartdiv", am4charts.XYChart);
-var listeTypeComposants = []
-var listeTypeAlerte = []
-var alerte = []
-var bac = []
-var listeBacPosition = []
+var Sensor = []
+var listeTypeSensorTypes = []
+var SensorTypes = []
+var Station = []
+var listeStationPosition = []
 var composant = []
-var alerteRecu = []
-var relevesCapteurs = []
+var SensorTypesRecu = []
+var SensorReading = []
 
 let newArray = [];
 var lineSeries =[]
@@ -98,7 +98,7 @@ async function fetchMovies(i,numCapteur,amount,dateDebut,dateFin) {
 	var data = { "numTable" : i };
 	var url = new URL("http://192.20.55.3:5000/api/capteur");
 	for (let k in data) { url.searchParams.append(k, data[k]); }
-	if(i==10){
+	if(i==3){
 		url.searchParams.append("sensorid",numCapteur)
 		url.searchParams.append("amount",amount)
 		if(!(dateDebut== null)){
@@ -114,39 +114,23 @@ async function fetchMovies(i,numCapteur,amount,dateDebut,dateFin) {
 
 
 const chargeData = () => {
-	listeTypeComposants = []
-	listeTypeAlerte = []
-	alerte = []
-	bac = []
-	listeBacPosition = []
-	composant = []
-	alerteRecu = []
-	relevesCapteurs = []
+	Sensor = []
+	SensorTypes = []
+	Station = []
+	SensorTypesRecu = []
+	SensorReading = []
 	lu=fetchMovies(0)
     lu.then((a) => {
-		a['data'][0].ListeTypeComposants.forEach(element => listeTypeComposants.push(element));
+		a['data'][0].Sensor.forEach(element => Sensor.push(element));
 	})
 	lu=fetchMovies(1)
     lu.then((a) => {
-		a['data'][0].ListeTypeAlerte.forEach(element => listeTypeAlerte.push(element));
+        a['data'][0].SensorTypes.forEach(element => SensorTypes.push(element));
 	})
 	lu=fetchMovies(2)
     lu.then((a) => {
-        a['data'][0].Alerte.forEach(element => alerte.push(element));
+        a['data'][0].Station.forEach(element => Station.push(element));
 	})
-	lu=fetchMovies(3)
-    lu.then((a) => {
-        a['data'][0].Bac.forEach(element => bac.push(element));
-	})
-	lu=fetchMovies(4)
-    lu.then((a) => {
-        a['data'][0].ListeBacPosition.forEach(element => listeBacPosition.push(element));
-	})
-	lu=fetchMovies(5)
-    lu.then((a) => {
-        a['data'][0].AlerteRecu.forEach(element => alerteRecu.push(element));
-	})
-	uniqueIdCapteur=[...new Set(relevesCapteurs.map(m=>m.SensorId))]
 	dataToGraph()
 };
 
@@ -155,19 +139,17 @@ function getRandomInt(max) {
 }
 
 update.addEventListener('click', function() {
-	
-	
-	
+		
 	DebutValeur=new Date(StartTime.value)
 	FinValeur=new Date(EndTime.value)
 	
 	for(var n=0;n<TotalNbrCapteur;n++){
 		if(document.getElementById(''+n).checked==true){
 			console.log(n+" est allumé")
-			lu=fetchMovies(10,n,10,Math.round(DebutValeur.getTime()/1000),Math.round(FinValeur.getTime()/1000))
-			relevesCapteurs.splice(0,relevesCapteurs.length)
+			lu=fetchMovies(3,n,10,Math.round(DebutValeur.getTime()/1000),Math.round(FinValeur.getTime()/1000))
+			SensorReading.splice(0,SensorReading.length)
 			lu.then((a) => {
-				a['data'][0].SensorReading.forEach(element => relevesCapteurs.push(element));;
+				a['data'][0].SensorReading.forEach(element => SensorReading.push(element));;
 			})
 		}
 	}
@@ -204,8 +186,11 @@ function setButton(){
 }
 
 tempo=nbCap()
-	tempo.then((a)=>{TotalNbrCapteur=a[0][0];console.log(TotalNbrCapteur)
-})
+tempo.then(
+			(a)=>{	TotalNbrCapteur=a[0][0];
+					console.log(TotalNbrCapteur)
+			}
+		)
 
 function dataToGraph(){
 	chart = am4core.create("chartdiv", am4charts.XYChart);
@@ -234,7 +219,7 @@ function dataToGraph(){
 
 	window.setTimeout(function() {
 		
-		listeValeur=[...new Set(relevesCapteurs.map(m=>m.SensorId))].sort()
+		listeValeur=[...new Set(SensorReading.map(m=>m.SensorId))].sort()
 		for(var i=0;i<listeValeur.length;i++){
 	
 			lineSeries.push(chart.series.push(new am4charts.LineSeries()));
@@ -248,7 +233,7 @@ function dataToGraph(){
 		}
 		chart.validateData();
 		newArray=[]
-		relevesCapteurs.forEach(function (a) {
+		SensorReading.forEach(function (a) {
 			var obj = {};
 			obj[a.SensorId + "y"] = a.Value;
 			obj[a.SensorId + "x"] = new Date(a.DateAdded);
