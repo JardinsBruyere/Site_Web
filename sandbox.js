@@ -10,6 +10,8 @@
  * ---------------------------------------
  */
  
+var URL_REFERENCE="http://192.20.55.3:5000"
+ 
 var listPrecision=[
  { timeUnit: "millisecond", count: 1 },
  { timeUnit: "millisecond", count: 5 },
@@ -24,7 +26,7 @@ var listPrecision=[
  { timeUnit: "minute", count: 1 },
  { timeUnit: "minute", count: 5 },
  { timeUnit: "minute", count: 10 },
- { timeUnit: "minute", count: 1000 },
+ { timeUnit: "minute", count: 30 },
  { timeUnit: "hour", count: 1 },
  { timeUnit: "hour", count: 3 },
  { timeUnit: "hour", count: 6 },
@@ -88,7 +90,7 @@ var time=1000
 var dateAxis
 
 async function nbCap() {
-	var url = new URL("http://192.20.55.3:5000/api/nbCapteur");
+	var url = new URL(URL_REFERENCE+"/api/nbCapteur");
     let response = await fetch(encodeURI(url));
 	return await response.json();
 }
@@ -96,7 +98,7 @@ async function nbCap() {
 
 async function fetchMovies(i,numCapteur,amount,dateDebut,dateFin) {
 	var data = { "numTable" : i };
-	var url = new URL("http://192.20.55.3:5000/api/capteur");
+	var url = new URL(URL_REFERENCE+"/api/capteur");
 	for (let k in data) { url.searchParams.append(k, data[k]); }
 	if(i==3){
 		url.searchParams.append("sensorid",numCapteur)
@@ -244,6 +246,7 @@ function dataToGraph(){
 		chart.validateData();
 		
 		chart.legend = new am4charts.Legend();
+		dateAxis.baseInterval={ timeUnit: "minute", count: 10 }
 	}, time);
 }
 
