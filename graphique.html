@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<!-- En-tête de la page -->
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Données climatiques</title>
+		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+		<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+		<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+		<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+		<script src="https://cdn.amcharts.com/lib/4/plugins/rangeSelector.js"></script>
+		<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+		<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+		<script src="https://cdn.amcharts.com/lib/4/plugins/timeline.js"></script> 
+		<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+		<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+		<script src="js/sandbox.js" defer></script>
+		<link href="css_files/sandbox.css" rel="stylesheet">
+		<link href="css_files/style.css" rel="stylesheet">
+		<link href="css_files/file.css" rel="stylesheet">
+		<link href="css_files/Edit.css" rel="stylesheet">
+		<link rel="shortcut icon" href="icon/favicon.ico">
+    </head>
+    
+    <header>
+        <div class="container">
+            <div class="brand">
+                <h2>3G<span>Green Garden Guys</span></h2>
+            </div>
+            <nav class="navbar">
+                <ul class="menu">
+                    <li class="menu-item">
+                        <a href="index.html">Accueil</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="graphique.html">Graphique</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="Edit.html">Edition</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="https://meteofrance.com/previsions-meteo-france/perigueux/24000">Météo régionale</a>
+                    </li>
+                    <li class="menu-item">
+						<a href="equipe.html">Cap projet</a>
+					</li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <body>
+        <table>
+		  <colgroup>
+			<col class="ten" />
+			<col class="tentwenty" />
+		  </colgroup>
+		  <tr>
+			<th>
+				<div id="boite">
+					<div id="chartdiv"></div>
+				</div>
+			</th>
+			<th> 
+				<p id="setup">
+					<H3><p style="color:#FF0000"><u>Paramétrage graphique</u></p></H3>
+					<br>
+					<div style="border: thin solid black">
+						<p style="color:#FF0000"><u>Filtrage</u></p>
+						<br>
+						Par Type:
+						<br>
+						<select id = "ddlFruits"></select>
+						<br>
+						Par Station:
+						<br>
+						<select id = "ddlFruits2"></select>
+						<br>
+						<button id="search">Filtrer</button>
+					</div>
+					<div style="border: thin solid black">
+						<p style="color:#FF0000"><u>Liste des capteurs disponibles:</u></p>
+						<br>
+						<div id="container" ></div>
+						<br>
+						Début : <input type="datetime-local" id="StartTime"
+						   name="meeting-time" value="2020-01-20T00:00"
+						   min="2020-01-20T00:00" max="2022-01-22T00:00">
+						<br>
+						Fin : <input type="datetime-local" id="EndTime"
+						   name="meeting-time" value="2050-01-28T00:00"
+						   min="2023-01-20T00:00" max="2060-01-28T00:00">
+						<br><br>
+						<button id="update">Afficher</button>
+					</div>
+					<div style="border: thin solid black">
+						<p style="color:#FF0000"><u>Changer la précision du graphique:</u></p>
+						<br>
+						<select name="precision" id="precision" onchange="updatePrecision(this)">
+					</div>
+				</p>
+			 </th>
+		  </tr>
+		 </table>
+		 <hr>
+		 <H3>Stats du graphique:</H3>
+		 <div id="stat">
+			<div id="detailCapteur"></div>
+		 </div>
+		 <br>
+		 <br>
+		 <br>
+    </body>
+		
+
+<footer class="footer">
+  <div class="container">
+      <div class="row">
+          <div class="footer-col">
+              <h4> Team 3G</h4>
+          </div>    
+	  </div>
+  </div>
+  <table width="100%" border="0">
+	  <tr>    
+	  <td><img src="Pictures/blanc.png" width="150" height="100" alt="" align="left" /></td>
+	  <td><img src="Pictures/logo-cap-projet-removebg-preview.png" width="150" height="100" align="right"/></td>
+	  </tr>
+	</table>
+</footer>
+</html>

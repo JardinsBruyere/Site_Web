@@ -10,7 +10,7 @@
  * ---------------------------------------
  */
  
-var URL_REFERENCE="http://192.20.55.3:5000"
+var URL_REFERENCE="http://172.21.224.39:5000/"
  
 var listPrecision=[
  { timeUnit: "millisecond", count: 1 },
@@ -51,6 +51,7 @@ var listPrecision=[
 
 var update = document.getElementById("update"); 
 var select = document.getElementById('precision');
+var search = document.getElementById('search');
 var pos=0
 listPrecision.forEach(function (a) {
     var opt = document.createElement('option');
@@ -77,6 +78,8 @@ var listeStationPosition = []
 var composant = []
 var SensorTypesRecu = []
 var SensorReading = []
+var currentSensor=[]
+var clickedSensor=[]
 
 let newArray = [];
 var lineSeries =[]
@@ -89,12 +92,35 @@ var time=1000
 
 var dateAxis
 
+function numAverage(a) {
+  var b = a.length,
+      c = 0, i;
+  for (i = 0; i < b; i++){
+    c += Number(a[i]);
+  }
+  return c/b;
+}
+
+const std = (arr = []) => {
+   if(!arr.length){
+      return 0;
+   };
+   const sum = arr.reduce((acc, val) => acc + val);
+   const { length: num } = arr;
+   const median = sum / num;
+   let variance = 0;
+   arr.forEach(num => {
+      variance += ((num - median) * (num - median));
+   });
+   variance /= num;
+   return variance;
+};
+
 async function nbCap() {
 	var url = new URL(URL_REFERENCE+"/api/nbCapteur");
     let response = await fetch(encodeURI(url));
 	return await response.json();
 }
-
 
 async function fetchMovies(i,numCapteur,amount,dateDebut,dateFin) {
 	var data = { "numTable" : i };
@@ -114,6 +140,21 @@ async function fetchMovies(i,numCapteur,amount,dateDebut,dateFin) {
 	return await response.json();
 }
 
+function AddType(elem) {
+   var ddl = document.getElementById("ddlFruits");
+   var option = document.createElement("OPTION");
+   option.innerHTML = elem.Unit;
+   option.value = elem.Id;
+   ddl.options.add(option);
+}
+
+function AddStation(elem) {
+   var ddl = document.getElementById("ddlFruits2");
+   var option = document.createElement("OPTION");
+   option.innerHTML = elem.Name;
+   option.value = elem.Id;
+   ddl.options.add(option);
+}
 
 const chargeData = () => {
 	Sensor = []
@@ -123,15 +164,25 @@ const chargeData = () => {
 	SensorReading = []
 	lu=fetchMovies(0)
     lu.then((a) => {
-		a['data'][0].Sensor.forEach(element => Sensor.push(element));
+		a['data'][0].Sensor.forEach(element => {
+			Sensor.push(element)}
+		);
 	})
 	lu=fetchMovies(1)
     lu.then((a) => {
-        a['data'][0].SensorTypes.forEach(element => SensorTypes.push(element));
+		AddType({Id:-1,Unit:"Tous"})
+        a['data'][0].SensorTypes.forEach(element =>  {
+			SensorTypes.push(element)
+			AddType(element)
+		});
 	})
 	lu=fetchMovies(2)
     lu.then((a) => {
-        a['data'][0].Station.forEach(element => Station.push(element));
+		AddStation({Id:-1,Name:"Tous"})
+        a['data'][0].Station.forEach(element => {
+			Station.push(element)
+			AddStation(element)
+		});
 	})
 	dataToGraph()
 };
@@ -144,11 +195,13 @@ update.addEventListener('click', function() {
 		
 	DebutValeur=new Date(StartTime.value)
 	FinValeur=new Date(EndTime.value)
-	
-	for(var n=0;n<TotalNbrCapteur;n++){
-		if(document.getElementById(''+n).checked==true){
+	clickedSensor=[]
+	SensorReading=[]
+	for(var n=0;n<checker.length;n++){
+		if(checker[n].checked==true){
+			clickedSensor.push(Sensor[checker[n].id])
 			console.log(n+" est allumé")
-			lu=fetchMovies(3,n,10,Math.round(DebutValeur.getTime()/1000),Math.round(FinValeur.getTime()/1000))
+			lu=fetchMovies(3,Sensor[checker[n].id].Id,10,Math.round(DebutValeur.getTime()/1000),Math.round(FinValeur.getTime()/1000))
 			SensorReading.splice(0,SensorReading.length)
 			lu.then((a) => {
 				a['data'][0].SensorReading.forEach(element => SensorReading.push(element));;
@@ -159,43 +212,80 @@ update.addEventListener('click', function() {
 	
 	window.setTimeout(function() {
 		dataToGraph()
+		addStat()
 	}, time);
 	
 })
 
+function addStat(){
+	var b = document.getElementById("detailCapteur")
+	b.innerHTML=""
+	let table2 = document.createElement("table");  //makes a table element for the page
+	table2.classList.add('fl-table');
+	table2.insertAdjacentHTML("beforeend","<tr class='firstRow'><th>Id</th><th>Name</th><th>Moyenne</th><th>Variance</th></tr>"); //adds the first row that contains the sections for the table
+	
+	for(var i=0;i<clickedSensor.length;i++){
+		console.log(clickedSensor[i].Id)
+		table2.insertAdjacentHTML("beforeend","<tr><td>" + clickedSensor[i].Id + "</td><td>" + clickedSensor[i].Name + "</td><td>"+numAverage(SensorReading.filter(a=> a.SensorId==clickedSensor[i].Id).map(a=>a.Value))+"</td><td>" + std(SensorReading.filter(a=> a.SensorId==clickedSensor[i].Id).map(a=>a.Value)) + "</td></tr>");
+	}
+	
+	b.appendChild(table2);
+}
+
+function removeAllChildNodes(parent) {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
+}
+
 function setButton(){
+	console.log(checker)
+	removeAllChildNodes(document.getElementById('container'))
+	checker.length=0
+	TotalNbrCapteur=Sensor.length
+	currentSensor=[]
 	console.log("test "+TotalNbrCapteur);
 	for(var n=0;n<TotalNbrCapteur;n++){
-		console.log(n)
-		var checkbox = document.createElement('input');
-		var label = document.createElement('label')
-		var br = document.createElement('br');
-		var container = document.getElementById('container');
-		checkbox.type = 'checkbox';
-		checkbox.id = ''+n;
-		checkbox.name = 'interest';	
-		checkbox.value = ''+checkbox.id;
-	 
-		label.htmlFor = ''+checkbox.id;
-		label.appendChild(document.createTextNode(''+checkbox.id));
-	 
-		container.appendChild(checkbox);
-		container.appendChild(label);
-		container.appendChild(br);
-		container.appendChild(br);
-		checker.push(document.getElementById(''+checkbox.id))
+		current=Sensor[n]
+		if( (current.Type==document.getElementById("ddlFruits").value||document.getElementById("ddlFruits").value==-1) && (current.Station==document.getElementById("ddlFruits2").value||document.getElementById("ddlFruits2").value==-1) ){
+			console.log(n)
+			currentSensor.push(current)
+			var checkbox = document.createElement('input');
+			var label = document.createElement('label')
+			var br = document.createElement('br');
+			var container = document.getElementById('container');
+			checkbox.type = 'checkbox';
+			checkbox.id = ''+n;
+			checkbox.name = 'interest';	
+
+			label.innerText =current.Name+" ";
+			label.id="label_"+n
+		 
+			container.appendChild(checkbox);
+			container.appendChild(label);
+			container.appendChild(br);
+			container.appendChild(br);
+			checker.push(document.getElementById(''+checkbox.id))
+		}
 	}
 }
 
+search.addEventListener('click', function() {
+	setButton();
+})
+
 tempo=nbCap()
 tempo.then(
-			(a)=>{	TotalNbrCapteur=a[0][0];
-					console.log(TotalNbrCapteur)
-			}
-		)
+	(a)=>{	TotalNbrCapteur=a[0][0];
+			console.log(TotalNbrCapteur)
+	}
+)
 
 function dataToGraph(){
+	chart=null
 	chart = am4core.create("chartdiv", am4charts.XYChart);
+	chart.exporting.menu = new am4core.ExportMenu();
+
 	chart.dateFormatter.dateFormat = "MMMM d yyyy hh:mm:ss";
 
 	chart.cursor = new am4charts.XYCursor();
@@ -211,7 +301,7 @@ function dataToGraph(){
 	chart.scrollbarX = new am4core.Scrollbar();
 
 	var valueAxisY = chart.yAxes.push(new am4charts.ValueAxis());
-	valueAxisY.title.text = 'Y Axis';
+	valueAxisY.title.text = 'Valeur';
 	chart.scrollbarY = new am4core.Scrollbar();
 
 	var title = chart.titles.create();
@@ -227,13 +317,11 @@ function dataToGraph(){
 			lineSeries.push(chart.series.push(new am4charts.LineSeries()));
 			lineSeries[i].dataFields.valueY = listeValeur[i]+"y";
 			lineSeries[i].dataFields.dateX = listeValeur[i]+"x";
-			lineSeries[i].tooltipText = "numéro:{name}\nX:{dateX.formatDate()}\nY:{valueY}";
+			lineSeries[i].tooltipText = "Capteur:"+clickedSensor[i].Name+"\nDate:{dateX.formatDate()}\nValeur:{valueY} "+ SensorTypes.filter(a=>a.Id==clickedSensor[i].Type)[0].Unit;
 			lineSeries[i].strokeWidth = 2;
 			lineSeries[i].tensionX = 1;
-			
-			lineSeries[i].name = ""+listeValeur[i]
+			lineSeries[i].name = clickedSensor[i].Name
 		}
-		chart.validateData();
 		newArray=[]
 		SensorReading.forEach(function (a) {
 			var obj = {};
@@ -255,8 +343,6 @@ function updatePrecision(val){
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 chargeData();
 
