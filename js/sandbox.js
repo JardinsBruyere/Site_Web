@@ -10,7 +10,7 @@
  * ---------------------------------------
  */
  
-var URL_REFERENCE="http://172.21.224.39:5000/"
+var URL_REFERENCE="http://"+localStorage.ipJardinBruyere+":5000/"
  
 var listPrecision=[
  { timeUnit: "millisecond", count: 1 },

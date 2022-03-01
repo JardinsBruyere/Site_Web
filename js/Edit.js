@@ -3,8 +3,13 @@ var SensorTypes = []
 var Station = []
 var Sensor = []
 
-var URL_REFERENCE="http://172.21.224.39:5000/"
+var URL_REFERENCE="http://"+localStorage.ipJardinBruyere+":5000/"
 
+var addStation = document.getElementById('addStation');
+var addType = document.getElementById('addType');
+
+var deleteStation = document.getElementById('deleteStation');
+var deleteType = document.getElementById('deleteType');
 
 async function fetchMovies(i,numCapteur,amount,dateDebut,dateFin) {
 	var data = { "numTable" : i };
@@ -13,6 +18,59 @@ async function fetchMovies(i,numCapteur,amount,dateDebut,dateFin) {
     let response = await fetch(encodeURI(url));
 	return await response.json();
 }
+
+async function addStationFunc() {
+	var url = new URL(URL_REFERENCE+"/api/addStation");
+    let response = await fetch(encodeURI(url));
+	return await response;
+}
+
+async function addTypeFunc() {
+	var url = new URL(URL_REFERENCE+"/api/addType");
+    let response = await fetch(encodeURI(url));
+
+	return await response;
+}
+
+async function deleteStationFunc(num) {
+	var data = { "num" : num };
+	var url = new URL(URL_REFERENCE+"/api/deleteStation");
+	for (let k in data) { url.searchParams.append(k, data[k]); }
+    let response = await fetch(encodeURI(url));
+	return await response;
+}
+
+async function deleteTypeFunc(num) {
+	var data = { "num" : num };
+	var url = new URL(URL_REFERENCE+"/api/deleteType");
+	for (let k in data) { url.searchParams.append(k, data[k]); }
+    let response = await fetch(encodeURI(url));
+	return await response;
+}
+
+addStation.addEventListener('click', function() {
+	addStationFunc()
+})
+
+addType.addEventListener('click', function() {
+	addTypeFunc()
+})
+
+deleteStation.addEventListener('click', function() {
+	if(!(document.getElementById("selectStation").value in Station.map(a=>a.Id))){
+		deleteStationFunc(document.getElementById("selectStation").value)
+	}else{
+		console.log("Cette station est deja utilisé")
+	}
+})
+
+deleteType.addEventListener('click', function() {
+	if(!(document.getElementById("selectType").value in SensorTypes.map(a=>a.Id))){
+		deleteTypeFunc(document.getElementById("selectType").value)
+	}else{
+		console.log("Ce type est deja utilisé")
+	}
+})
 
 function modification(){
 	lu=updateValue(2,"new")
@@ -29,7 +87,7 @@ function createTableSensor() {
         table.classList.add('fl-table');
         table.insertAdjacentHTML("beforeend","<tr class='firstRow'><th>Id</th><th>DateAdded</th><th>Name</th><th>Station</th><th>Type</th></tr>"); //adds the first row that contains the sections for the table
         for (var i = 0; i < Sensor.length; i++){  //loops through the array 
-			table.insertAdjacentHTML("beforeend","<tr><td>" + Sensor[i].Id + "</td><td>"+ Sensor[i].DateAdded +"</td><td><input type=\"text\" id=\"Sensor_Name_"+i+"\" name=\"fname\" value=\"" + Sensor[i].Name + "\"></td><td><input type=\"text\" id=\"Sensor_Station_"+i+"\" name=\"fname\" value=" + Sensor[i].Station + "></td><td><input type=\"text\" id=\"Sensor_Type_"+i+"\" name=\"fname\" value=" + Sensor[i].Type + "></td></tr>");
+			table.insertAdjacentHTML("beforeend","<tr><td>" + Sensor[i].Id + "</td><td>"+ Sensor[i].DateAdded +"</td><td><input type=\"text\" id=\"Sensor_Name_"+Sensor[i].Id+"\" name=\"fname\" value=\"" + Sensor[i].Name + "\"></td><td><input type=\"text\" id=\"Sensor_Station_"+Sensor[i].Id+"\" name=\"fname\" value=" + Sensor[i].Station + "></td><td><input type=\"text\" id=\"Sensor_Type_"+Sensor[i].Id+"\" name=\"fname\" value=" + Sensor[i].Type + "></td></tr>");
 		}
     
 		document.body.insertBefore(table, currentDiv);
@@ -39,29 +97,44 @@ function createTableSensor() {
 function createTableSensorTypes(){
 
 	var currentDiv2 = document.getElementById('div2');
+   var ddl = document.getElementById("selectType");
 	
 	let table2 = document.createElement("table");  //makes a table element for the page
 	table2.classList.add('fl-table');
 	table2.insertAdjacentHTML("beforeend","<tr class='firstRow'><th>Id</th><th>Unit</th></tr>"); //adds the first row that contains the sections for the table
 	for (var i = 0; i < SensorTypes.length; i++){  //loops through the array 
-		table2.insertAdjacentHTML("beforeend","<tr><td>" + SensorTypes[i].Id + "</td><td><input type=\"text\" id=\"SensorTypes_Unit_"+i+"\" name=\"fname\" value=" + SensorTypes[i].Unit + "></td></tr>");
+		table2.insertAdjacentHTML("beforeend","<tr><td>" + SensorTypes[i].Id + "</td><td><input type=\"text\" id=\"SensorTypes_Unit_"+SensorTypes[i].Id+"\" name=\"fname\" value=" + SensorTypes[i].Unit + "></td></tr>");
+	   var option = document.createElement("OPTION");
+	   option.innerHTML = SensorTypes[i].Unit;
+	   option.value = SensorTypes[i].Id;
+	   ddl.options.add(option);
 	}
 	console.log(SensorTypes.length)
 	document.body.insertBefore(table2, currentDiv2);
+	
+	
+
 }
 
 function createTableStation(){
 
 	var currentDiv2 = document.getElementById('div3');
+   var ddl = document.getElementById("selectStation");
 	
 	let table2 = document.createElement("table");  //makes a table element for the page
 	table2.classList.add('fl-table');
 	table2.insertAdjacentHTML("beforeend","<tr class='firstRow'><th>Id</th><th>Name</th></tr>"); //adds the first row that contains the sections for the table
-	for (var i = 0; i < SensorTypes.length; i++){  //loops through the array 
-		table2.insertAdjacentHTML("beforeend","<tr><td>" + Station[i].Id + "</td><td><input type=\"text\" id=\"Station_Name_"+i+"\" name=\"fname\" value=\"" + Station[i].Name + "\"></td></tr>");
+	for (var i = 0; i < Station.length; i++){  //loops through the array 
+		table2.insertAdjacentHTML("beforeend","<tr><td>" + Station[i].Id + "</td><td><input type=\"text\" id=\"Station_Name_"+Station[i].Id+"\" name=\"fname\" value=\"" + Station[i].Name + "\"></td></tr>");
+	   var option = document.createElement("OPTION");
+	   option.innerHTML = Station[i].Name;
+	   option.value = Station[i].Id;
+	   ddl.options.add(option);
 	}
 	console.log(SensorTypes.length)
 	document.body.insertBefore(table2, currentDiv2);
+	
+	
 }
 
 const chargeData = () => {
@@ -102,26 +175,48 @@ async function updateValue(numCapteur,name,column,table) {
 document.getElementById('change').addEventListener('click', function() {
 	
 	for (var i = 0; i < Sensor.length; i++){
-		if(document.getElementById("Sensor_Name_"+i).value!=Sensor[i].Name){
-			updateValue(i+1,document.getElementById("Sensor_Name_"+i).value,"Name","Sensor")
+		if(document.getElementById("Sensor_Name_"+Sensor[i].Id).value!=Sensor[i].Name){
+			updateValue(Sensor[i].Id,document.getElementById("Sensor_Name_"+Sensor[i].Id).value,"Name","Sensor")
 		}
-		if(document.getElementById("Sensor_Type_"+i).value!=Sensor[i].Type){
-			updateValue(i+1,document.getElementById("Sensor_Type_"+i).value,"Type","Sensor")
+		
+		if(parseInt(document.getElementById("Sensor_Type_"+Sensor[i].Id).value)!=NaN){
+			if(parseInt(document.getElementById("Sensor_Type_"+Sensor[i].Id).value) in SensorTypes.map(a=>a.Id)){
+				if(document.getElementById("Sensor_Type_"+Sensor[i].Id).value!=Sensor[i].Type){
+					updateValue(Sensor[i].Id,document.getElementById("Sensor_Type_"+Sensor[i].Id).value,"Type","Sensor")
+				}
+			}else{
+				console.log("Le type "+document.getElementById("Sensor_Type_"+Sensor[i].Id).value+" n'est pas disponible dans "+SensorTypes.map(a=>a.Id))
+				}
+		}else{
+			console.log(document.getElementById("Sensor_Type_"+Sensor[i].Id).value+" n'est pas un entier désolé")
 		}
-		if(document.getElementById("Sensor_Station_"+i).value!=Sensor[i].Station){
-			updateValue(i+1,document.getElementById("Sensor_Station_"+i).value,"Station","Sensor")
+		
+		
+		if(parseInt(document.getElementById("Sensor_Station_"+Sensor[i].Id).value)!=NaN){
+			if(parseInt(document.getElementById("Sensor_Station_"+Sensor[i].Id).value) in Station.map(a=>a.Id)){
+				if(document.getElementById("Sensor_Station_"+Sensor[i].Id).value!=Sensor[i].Station){
+					updateValue(Sensor[i].Id,document.getElementById("Sensor_Station_"+Sensor[i].Id).value,"Station","Sensor")
+				}
+			}else{
+				console.log("La station "+document.getElementById("Sensor_Station_"+Sensor[i].Id).value+" n'est pas disponible")
+				}
+		}else{
+			console.log(document.getElementById("Sensor_Station_"+Sensor[i].Id).value+" n'est pas un entier désolé")
 		}
+
 	}
 	
 	for (var i = 0; i < SensorTypes.length; i++){
-		if(document.getElementById("SensorTypes_Unit_"+i).value!=SensorTypes[i].Unit){
-			updateValue(i+1,document.getElementById("SensorTypes_Unit_"+i).value,"Unit","SensorTypes")
+		console.log("SensorTypes_Unit_"+(SensorTypes[i].Id))
+		if(document.getElementById("SensorTypes_Unit_"+SensorTypes[i].Id).value!=SensorTypes[i].Unit){
+			updateValue(SensorTypes[i].Id,document.getElementById("SensorTypes_Unit_"+(SensorTypes[i].Id)).value,"Unit","SensorTypes")
 		}
 	}
 	
 	for (var i = 0; i < Station.length; i++){
-		if(document.getElementById("Station_Name_"+i).value!=Station[i].Name){
-			updateValue(i+1,document.getElementById("Station_Name_"+i).value,"Name","Station")
+		console.log("Station_Name_"+Station[i].Id)
+		if(document.getElementById("Station_Name_"+Station[i].Id).value!=Station[i].Name){
+			updateValue(Station[i].Id,document.getElementById("Station_Name_"+(Station[i].Id)).value,"Name","Station")
 		}
 	}
 	
