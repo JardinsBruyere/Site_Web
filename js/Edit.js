@@ -180,26 +180,26 @@ document.getElementById('change').addEventListener('click', function() {
 		}
 		
 		if(parseInt(document.getElementById("Sensor_Type_"+Sensor[i].Id).value)!=NaN){
-			if(parseInt(document.getElementById("Sensor_Type_"+Sensor[i].Id).value) in SensorTypes.map(a=>a.Id)){
+			if(SensorTypes.map(a=>a.Id).includes(parseInt(document.getElementById("Sensor_Type_"+Sensor[i].Id).value))){
 				if(document.getElementById("Sensor_Type_"+Sensor[i].Id).value!=Sensor[i].Type){
 					updateValue(Sensor[i].Id,document.getElementById("Sensor_Type_"+Sensor[i].Id).value,"Type","Sensor")
 				}
 			}else{
 				console.log("Le type "+document.getElementById("Sensor_Type_"+Sensor[i].Id).value+" n'est pas disponible dans "+SensorTypes.map(a=>a.Id))
-				}
+			}
 		}else{
 			console.log(document.getElementById("Sensor_Type_"+Sensor[i].Id).value+" n'est pas un entier désolé")
 		}
 		
 		
 		if(parseInt(document.getElementById("Sensor_Station_"+Sensor[i].Id).value)!=NaN){
-			if(parseInt(document.getElementById("Sensor_Station_"+Sensor[i].Id).value) in Station.map(a=>a.Id)){
+			if(Station.map(a=>a.Id).includes(parseInt(document.getElementById("Sensor_Station_"+Sensor[i].Id).value))){
 				if(document.getElementById("Sensor_Station_"+Sensor[i].Id).value!=Sensor[i].Station){
 					updateValue(Sensor[i].Id,document.getElementById("Sensor_Station_"+Sensor[i].Id).value,"Station","Sensor")
 				}
 			}else{
 				console.log("La station "+document.getElementById("Sensor_Station_"+Sensor[i].Id).value+" n'est pas disponible")
-				}
+			}
 		}else{
 			console.log(document.getElementById("Sensor_Station_"+Sensor[i].Id).value+" n'est pas un entier désolé")
 		}

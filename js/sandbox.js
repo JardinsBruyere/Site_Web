@@ -88,7 +88,7 @@ var checker=[]
 
 var TotalNbrCapteur;
 
-var time=1000
+var time=1500
 
 var dateAxis
 
@@ -283,6 +283,7 @@ tempo.then(
 
 function dataToGraph(){
 	chart=null
+	lineSeries=[]
 	chart = am4core.create("chartdiv", am4charts.XYChart);
 	chart.exporting.menu = new am4core.ExportMenu();
 
@@ -331,11 +332,11 @@ function dataToGraph(){
 			chart.data=newArray
 		});
 		console.log(chart.data)
-		chart.validateData();
 		
 		chart.legend = new am4charts.Legend();
 		dateAxis.baseInterval={ timeUnit: "minute", count: 10 }
 	}, time);
+	chart.validateData
 }
 
 function updatePrecision(val){

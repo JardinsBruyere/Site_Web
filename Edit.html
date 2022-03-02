@@ -18,49 +18,27 @@
 		<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
 		<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 		<script src="js/Edit.js" defer></script>
+	<script src="js/generateHeader.js" defer></script>
 		<link href="css_files/sandbox.css" rel="stylesheet">
 		<link href="css_files/style.css" rel="stylesheet">
 		<link href="css_files/file.css" rel="stylesheet">
 		<link href="css_files/Edit.css" rel="stylesheet">
 		<link rel="shortcut icon" href="icon/favicon.ico">
+	<script src="js/generateFooter.js" defer></script>
     </head>
     
-    <header>
-        <div class="container">
-            <div class="brand">
-                <h2>3G<span>Green Garden Guys</span></h2>
-            </div>
-            <nav class="navbar">
-                <ul class="menu">
-                    <li class="menu-item">
-                        <a href="index.html">Accueil</a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="graphique.html">Graphique</a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="Edit.html">Edition</a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="https://meteofrance.com/previsions-meteo-france/perigueux/24000">Météo régionale</a>
-                    </li>
-                    <li class="menu-item">
-						<a href="equipe.html">Cap projet</a>
-					</li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    <div id="superHeader"></div>
+	
     <body>
-	<H2>Voici la liste des capteurs disponibles:</H2>
+	<H2>Liste des capteurs disponibles:</H2>
 	<div id="div1"></div>
-	<br><br><br>
-	<H2>Voici la liste des types de capteurs disponibles:</H2>
+	<br><hr>
+	<H2>Liste des types de capteurs disponibles:</H2>
 	<div id="div2"></div>
-	<br><br><br>
-	<H2>Voici la liste des Stations disponibles:</H2>
+	<br><hr>
+	<H2>Liste des Stations disponibles:</H2>
 	<div id="div3"></div>
-	<br>
+	<br><hr>
 	<button id="addStation">Ajouter une station</button>
 	<button id="addType">Ajouter un type</button>
 	<br><br>
@@ -74,22 +52,9 @@
 	<button id="change">Mettre à jour le serveur avec les nouvelles données</button>
 	
 	<br><br><br><br><br><br>
+	<div id="superFooter"></div>
     </body>
 
 
-<footer class="footer">
-  <div class="container">
-      <div class="row">
-          <div class="footer-col">
-              <h4> Team 3G</h4>
-          </div>    
-	  </div>
-  </div>
-  <table width="100%" border="0">
-	  <tr>    
-	  <td><img src="Pictures/blanc.png" width="150" height="100" alt="" align="left" /></td>
-	  <td><img src="Pictures/logo-cap-projet-removebg-preview.png" width="150" height="100" align="right"/></td>
-	  </tr>
-	</table>
-</footer>
+
 </html>
