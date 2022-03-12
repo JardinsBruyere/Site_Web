@@ -3,7 +3,7 @@ var SensorTypes = []
 var Station = []
 var Sensor = []
 
-var URL_REFERENCE="http://"+localStorage.ipJardinBruyere+":5000/"
+var URL_REFERENCE="http://"+localStorage.ipJardinBruyere+":5001/"
 
 var addStation = document.getElementById('addStation');
 var addType = document.getElementById('addType');
@@ -84,12 +84,15 @@ function createTableSensor() {
 		var currentDiv = document.getElementById('div1');
 		
         let table = document.createElement("table");  //makes a table element for the page
+		table.className+="blue"
         table.classList.add('fl-table');
-        table.insertAdjacentHTML("beforeend","<tr class='firstRow'><th>Id</th><th>DateAdded</th><th>Name</th><th>Station</th><th>Type</th></tr>"); //adds the first row that contains the sections for the table
-        for (var i = 0; i < Sensor.length; i++){  //loops through the array 
-			table.insertAdjacentHTML("beforeend","<tr><td>" + Sensor[i].Id + "</td><td>"+ Sensor[i].DateAdded +"</td><td><input type=\"text\" id=\"Sensor_Name_"+Sensor[i].Id+"\" name=\"fname\" value=\"" + Sensor[i].Name + "\"></td><td><input type=\"text\" id=\"Sensor_Station_"+Sensor[i].Id+"\" name=\"fname\" value=" + Sensor[i].Station + "></td><td><input type=\"text\" id=\"Sensor_Type_"+Sensor[i].Id+"\" name=\"fname\" value=" + Sensor[i].Type + "></td></tr>");
+        table.insertAdjacentHTML("beforeend","<thead><tr class='firstRow'><th>Id</th><th>DateAdded</th><th>Name</th><th>Station</th><th>Type</th></tr></thead>"); //adds the first row that contains the sections for the table
+		containbody=document.createElement('tbody')
+		for (var i = 0; i < Sensor.length; i++){  //loops through the array 
+			containbody.insertAdjacentHTML("beforeend","<tr><td>" + Sensor[i].Id + "</td><td>"+ Sensor[i].DateAdded +"</td><td><input type=\"text\" id=\"Sensor_Name_"+Sensor[i].Id+"\" name=\"fname\" value=\"" + Sensor[i].Name + "\"></td><td><input type=\"text\" id=\"Sensor_Station_"+Sensor[i].Id+"\" name=\"fname\" value=" + Sensor[i].Station + "></td><td><input type=\"text\" id=\"Sensor_Type_"+Sensor[i].Id+"\" name=\"fname\" value=" + Sensor[i].Type + "></td></tr>");
 		}
-    
+		table.appendChild(containbody)
+	   
 		document.body.insertBefore(table, currentDiv);
 	
 }
@@ -100,11 +103,15 @@ function createTableSensorTypes(){
    var ddl = document.getElementById("selectType");
 	
 	let table2 = document.createElement("table");  //makes a table element for the page
+	table2.className+="blue"
 	table2.classList.add('fl-table');
-	table2.insertAdjacentHTML("beforeend","<tr class='firstRow'><th>Id</th><th>Unit</th></tr>"); //adds the first row that contains the sections for the table
+	table2.insertAdjacentHTML("beforeend","<thead><tr class='firstRow'><th>Id</th><th>Unit</th></tr></thead>"); //adds the first row that contains the sections for the table
+	containbody=document.createElement('tbody')
 	for (var i = 0; i < SensorTypes.length; i++){  //loops through the array 
-		table2.insertAdjacentHTML("beforeend","<tr><td>" + SensorTypes[i].Id + "</td><td><input type=\"text\" id=\"SensorTypes_Unit_"+SensorTypes[i].Id+"\" name=\"fname\" value=" + SensorTypes[i].Unit + "></td></tr>");
-	   var option = document.createElement("OPTION");
+		containbody.insertAdjacentHTML("beforeend","<tr><td>" + SensorTypes[i].Id + "</td><td><input type=\"text\" id=\"SensorTypes_Unit_"+SensorTypes[i].Id+"\" name=\"fname\" value=" + SensorTypes[i].Unit + "></td></tr>");
+	   table2.appendChild(containbody)
+	   var option = document.createElement("OPTION"); 
+       option.className+="textColor"
 	   option.innerHTML = SensorTypes[i].Unit;
 	   option.value = SensorTypes[i].Id;
 	   ddl.options.add(option);
@@ -120,13 +127,16 @@ function createTableStation(){
 
 	var currentDiv2 = document.getElementById('div3');
    var ddl = document.getElementById("selectStation");
-	
 	let table2 = document.createElement("table");  //makes a table element for the page
+	table2.className+="blue"
 	table2.classList.add('fl-table');
-	table2.insertAdjacentHTML("beforeend","<tr class='firstRow'><th>Id</th><th>Name</th></tr>"); //adds the first row that contains the sections for the table
+	table2.insertAdjacentHTML("beforeend","<thead><tr class='firstRow'><th>Id</th><th>Name</th></tr></thead>"); //adds the first row that contains the sections for the table	containbody=document.createElement('tbody')
+	containbody=document.createElement('tbody')
 	for (var i = 0; i < Station.length; i++){  //loops through the array 
-		table2.insertAdjacentHTML("beforeend","<tr><td>" + Station[i].Id + "</td><td><input type=\"text\" id=\"Station_Name_"+Station[i].Id+"\" name=\"fname\" value=\"" + Station[i].Name + "\"></td></tr>");
+		containbody.insertAdjacentHTML("beforeend","<tr><td>" + Station[i].Id + "</td><td><input type=\"text\" id=\"Station_Name_"+Station[i].Id+"\" name=\"fname\" value=\"" + Station[i].Name + "\"></td></tr>");
+	   table2.appendChild(containbody)
 	   var option = document.createElement("OPTION");
+	   option.className+="textColor"
 	   option.innerHTML = Station[i].Name;
 	   option.value = Station[i].Id;
 	   ddl.options.add(option);

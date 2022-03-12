@@ -2,7 +2,7 @@ var superHeader=document.getElementById("superHeader")
 let table = document.createElement("header"); 
 table.insertAdjacentHTML("beforeend","     <div class=\"container\">\
             <div class=\"brand\">\
-                <h2>3G<span>Green Garden Guys</span></h2>\
+                <h2 id=\"H2footer\">3G<span>Green Garden Guys</span></h2>\
             </div>\
             <nav class=\"navbar\">\
                 <ul class=\"menu\">\

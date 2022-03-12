@@ -10,7 +10,7 @@
  * ---------------------------------------
  */
  
-var URL_REFERENCE="http://"+localStorage.ipJardinBruyere+":5000/"
+var URL_REFERENCE="http://"+localStorage.ipJardinBruyere+":5001/"
  
 var listPrecision=[
  { timeUnit: "millisecond", count: 1 },
@@ -143,6 +143,7 @@ async function fetchMovies(i,numCapteur,amount,dateDebut,dateFin) {
 function AddType(elem) {
    var ddl = document.getElementById("ddlFruits");
    var option = document.createElement("OPTION");
+   option.className+="textColor"
    option.innerHTML = elem.Unit;
    option.value = elem.Id;
    ddl.options.add(option);
@@ -151,6 +152,7 @@ function AddType(elem) {
 function AddStation(elem) {
    var ddl = document.getElementById("ddlFruits2");
    var option = document.createElement("OPTION");
+   option.className+="textColor"
    option.innerHTML = elem.Name;
    option.value = elem.Id;
    ddl.options.add(option);
@@ -250,22 +252,30 @@ function setButton(){
 		if( (current.Type==document.getElementById("ddlFruits").value||document.getElementById("ddlFruits").value==-1) && (current.Station==document.getElementById("ddlFruits2").value||document.getElementById("ddlFruits2").value==-1) ){
 			console.log(n)
 			currentSensor.push(current)
-			var checkbox = document.createElement('input');
-			var label = document.createElement('label')
+			var toggle= document.createElement('label');
+			toggle.className+="toggle"
+			var toggle__input = document.createElement('input');
+			toggle__input.className+="toggle__input"
+			var toggle__label = document.createElement('span')
+			toggle__label.className += "toggle__label"
+			var toggle__text = document.createElement('span')
+			toggle__text.className += "toggle__text"
 			var br = document.createElement('br');
 			var container = document.getElementById('container');
-			checkbox.type = 'checkbox';
-			checkbox.id = ''+n;
-			checkbox.name = 'interest';	
+			toggle__input.type = 'checkbox';
+			toggle__input.id = ''+n;
+			toggle__input.name = 'interest';	
 
-			label.innerText =current.Name+" ";
-			label.id="label_"+n
-		 
-			container.appendChild(checkbox);
-			container.appendChild(label);
+			toggle__text.innerText =current.Name+" ";
+			toggle__text.id="label_"+n
+		 			
+			toggle__label.appendChild(toggle__text);
+			toggle.appendChild(toggle__input);
+			toggle.appendChild(toggle__label);
+			container.appendChild(toggle);
 			container.appendChild(br);
 			container.appendChild(br);
-			checker.push(document.getElementById(''+checkbox.id))
+			checker.push(document.getElementById(''+toggle__input.id))
 		}
 	}
 }
